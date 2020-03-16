@@ -10,5 +10,5 @@ TUID producttype (
     unique(no),--设置不能有重复值的字段
     index i_name (name) unique,--创建索引
     search(no, name, seachcode) --定义检索字段
-    --index 索引名称(字段名1,字段名2) 其他参数--自定义索引
+    --index 索引名称(字段名1,字段名2) 其他参数--自定义索引写法
 );
