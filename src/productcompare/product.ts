@@ -1,0 +1,1 @@
+import { CAppBase, IConstructor } from "tonva";
