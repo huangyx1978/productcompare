@@ -1,0 +1,40 @@
+//产品属性
+TUID productattribute (
+    id,
+    main no varchar(50),--编号
+    main name varchar(200),--名称
+    seachcode varchar(200),--查询码
+    producttype id producttype,--所属产品类型
+    productattributeclass id productattributeclass,--所属产品类型属性分类
+    note varchar(500),--备注
+    disabled int,--禁用
+    unique(no),--设置不能有重复值的字段
+    index i_name (name) unique,--创建索引
+    search(no, name, seachcode) --定义检索字段
+);
+
+QUERY queryproductattribute (
+    key varchar(100),--参数
+    ownerproducttype id producttype --所属产品类型
+)
+PAGE (
+    id bigint start 0 asc,//分页查询必需指定一个id字段作为分页依据
+    no varchar(50),--编号
+    name varchar(200),--名称
+    seachcode varchar(200),--查询码
+    producttype id producttype,--所属产品类型
+    productattributeclass id productattributeclass,--所属产品类型属性分类
+    note varchar(500), --备注
+    disabled int --禁用
+) {
+    var _key varchar(100);
+    set _key = concat('%', key, '%');
+    page select a.id,a.no,a.name,a.seachcode,a.producttype,a.productattributeclass,a.note,a.disabled
+        from productattribute as a
+        where a.id>$pageStart and (
+            a.no like _key or a.name like _key or a.seachcode like _key
+        )
+        and a.producttype=ownerproducttype
+        order by a.id asc
+        limit $pageSize;
+};

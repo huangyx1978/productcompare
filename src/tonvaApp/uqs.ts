@@ -1,29 +1,13 @@
 import { Tuid, Map, Query, Action, Sheet, Pending } from "tonva";
 
-export interface TaskManage {
-    Company:Tuid;
-    Department:Tuid;
-    StaffMember:Tuid;
-    Task:Sheet;
-    PENDING:Pending;
-    QueryTask:Query;
-    Submitintegral:Action;
-}
-
-export interface Task {
-    Company: Tuid;
-    QueryCompany: Query;
-    Department: Tuid;
-    QueryDepartment: Query;
-    QueryAllDepartment: Query;
-    QueryDepartments: Query;
-    StaffMember: Tuid;
-    QueryStaffMember:Query;
-    SaveStaffDepartment:Action;
+export interface productcompare {
+    producttype:Tuid;
+    productattribute:Tuid;
+    productattributeclass:Tuid;
+    queryproducttype:Query;
 }
 
 export interface UQs {
-    taskmanage: TaskManage;
-    task: Task;
+    productcompare: productcompare;
 }
 

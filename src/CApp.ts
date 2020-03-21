@@ -3,19 +3,25 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { CUqBase } from "./tonvaApp/CBase";
 import { UQs } from "./tonvaApp/uqs";
 import { VMain } from './tonvaApp/main';
-import { CMe } from "me/CMe";
-import { CHome } from "home/CHome";
+import { CMe } from "个人中心/CMe";
+import {CUserManage} from '用户管理/CUserManage';
+import { CDataDictionary } from "数据字典/CDataDictionary";
 
 export class CApp extends CAppBase {
     get uqs(): UQs { return this._uqs };
     /*在此定义模块类*/
     cMe: CMe;
+    CUserManage:CUserManage;
+    CDataDictionary:CDataDictionary;
+    
 
     protected newC<T extends CUqBase>(type: IConstructor<T>): T {
         return new type(this);
     }
 
     protected async internalStart() {
+        this.CUserManage=this.newC(CUserManage);
+        this.CDataDictionary=this.newC(CDataDictionary);
         this.cMe = this.newC(CMe); 
         this.showMain();
     }
