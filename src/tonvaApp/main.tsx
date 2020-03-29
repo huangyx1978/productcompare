@@ -14,8 +14,8 @@ export class VMain extends VPage<CApp> {
         let {  cMe,CUserManage,CDataDictionary} = this.controller;
         /*定义主界面的Tab,一个Tab对应一个模块*/
         let faceTabs = [
-            { name: 'UserManage', label: '用户管理', icon: 'tasks', content: CUserManage.tab },
             { name: 'DataDictionary', label: '数据字典', icon: 'tasks', content: CDataDictionary.tab },
+            { name: 'UserManage', label: '用户管理', icon: 'tasks', content: CUserManage.tab },           
             { name: 'Me', label: '个人中心', icon: 'user', content: cMe.tab }
         ].map(v => {
             let { name, label, icon, content/*, notify, onShown*/ } = v;

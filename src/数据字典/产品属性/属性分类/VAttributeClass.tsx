@@ -15,6 +15,14 @@ export class VAttributeClass extends VPage<CAttributeClass>{
 
     render(){
         return <Page header="属性分类" headerClassName="bg-info">
+            <div className="input-group mb-3">
+                <div className="input-group-prepend">
+                    <button className="input-group-text">开</button>
+                    <button className="input-group-text">关 </button>
+                </div>
+            </div>
+
+
            <div>
                 浏览器信息{navigator.userAgent}
             </div>
