@@ -20,6 +20,7 @@ export class CApp extends CAppBase {
     }
 
     protected async internalStart() {
+
         this.CUserManage=this.newC(CUserManage);
         this.CDataDictionary=this.newC(CDataDictionary);
         this.cMe = this.newC(CMe); 

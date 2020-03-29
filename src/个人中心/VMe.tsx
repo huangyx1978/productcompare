@@ -15,9 +15,7 @@ export class VMe extends VPage<CMe> {
 
     render(){
         return <Page header="个人中心" headerClassName="bg-info">
-            <div>
-           
-            </div>
+            
         </Page>
     }   
 }
