@@ -1,5 +1,6 @@
 import { CAppBase, IConstructor } from "tonva";
 import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.js'
 import { CUqBase } from "./tonvaApp/CBase";
 import { UQs } from "./tonvaApp/uqs";
 import { VMain } from './tonvaApp/main';
@@ -23,6 +24,7 @@ export class CApp extends CAppBase {
 
         this.CUserManage=this.newC(CUserManage);
         this.CDataDictionary=this.newC(CDataDictionary);
+        this.CDataDictionary.start();
         this.cMe = this.newC(CMe); 
         this.showMain();
     }

@@ -15,9 +15,14 @@
     "@types/react-dom": "^16.9.4",
     "bootstrap": "^4.4.1",
     "classnames": "^2.2.6",
+    "element-react": "^1.4.34",
+    "element-theme-default": "^1.4.13",
+    "jquery": "^3.4.1",
     "lodash": "^4.17.15",
     "mobx": "^5.15.2",
     "mobx-react": "^6.1.5",
+    "popper": "^1.0.1",
+    "popper.js": "^1.16.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0",
@@ -44,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "react-hot-loader": "^4.12.20"
   }
 }

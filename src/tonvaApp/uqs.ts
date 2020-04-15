@@ -5,6 +5,8 @@ export interface productcompare {
     productattribute:Tuid;
     productattributeclass:Tuid;
     queryproducttype:Query;
+    queryproductypegroup:Query;
+    queryproductattributeclass:Query;
 }
 
 export interface UQs {

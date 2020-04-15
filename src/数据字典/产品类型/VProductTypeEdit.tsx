@@ -1,11 +1,18 @@
 import * as React from 'react';
-import { nav, Image, VPage, Prop, IconText, FA, PropGrid, LMR, Page, UiSchema, Schema, UiTextItem, Form, UiTextAreaItem, UiButton, Context } from 'tonva';
+import { nav, Image, VPage, Prop, IconText, FA, PropGrid, LMR, Page, UiSchema, Schema, UiTextItem, Form, UiTextAreaItem, UiButton, Context, UiCheckItem } from 'tonva';
 import {CDataDictionary} from '../CDataDictionary'
+import {Switch, Button, Checkbox} from 'element-react'
+import 'element-theme-default'; 
 
 export class VProductTypeEdit extends VPage<CDataDictionary>
 {
     async open(producttype?: any){
         this.openPage(this.page,producttype);
+    }
+
+
+    private renderdisabled = (item: any) => {
+        return <Checkbox><Switch name='disabled' onValue='1' offValue='0' onText='启用' offText='禁用'></Switch></Checkbox>;//将基础信息的内容进行组织并输出
     }
 
     private page=(producttype?: any)=>{
@@ -15,13 +22,15 @@ export class VProductTypeEdit extends VPage<CDataDictionary>
         let schema: Schema=[
             {name:'name', type:'string' ,required:true},
             {name:'note', type:'string'},
+            {name:'disabled' , type:'string'},
             {name:'commit', type:'submit'}
         ];
 
         let uis: UiSchema={
             items:{
                 name:{widget: 'text', label: '名称', placeholder: '请输入名称'} as UiTextItem,
-                note:{widget: 'textarea', label: '备注'} as UiTextAreaItem,     
+                note:{widget: 'textarea', label: '备注'} as UiTextAreaItem,   
+                disabled:{widget: 'checkbox', label: '禁用'} as UiCheckItem,  
                 commit:{widget:'button', label: '提交',className:'btn btn-primary w-100'} as UiButton 
             }
         };
@@ -29,8 +38,6 @@ export class VProductTypeEdit extends VPage<CDataDictionary>
         let caption=producttype.id<0?'新增产品类型':producttype.name;
         return <Page header={caption} headerClassName="bg-primary" back="close">
             <Form schema={schema} uiSchema={uis} formData={formdate} fieldLabelSize={2} onButtonClick={this.buttonclick} className="m-3"/>
-
-            
         </Page>
     }
 
