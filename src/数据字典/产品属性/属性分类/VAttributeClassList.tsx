@@ -5,7 +5,9 @@ import {CAttributeClass} from './CAttributeClass';
 
 export class VAtrributeClassList extends VPage<CAttributeClass>{
     /*必需的定义*/
-    async open(param?: any){
+    producttype:any;
+    async open(producttype?: any){
+        this.producttype=producttype;
         this.openPage(this.page);
     }
 
@@ -22,8 +24,9 @@ export class VAtrributeClassList extends VPage<CAttributeClass>{
     }
 
     private page=()=>{
+        let header= "属性分类" + "(" + this.producttype.name + ")";
         let right=<div className="cursor-pointer align-self-center mr-2" onClick={this.onAddClick}><FA name="plus-circle" fixWidth={true} size="lg" /></div>
-        return <Page header="属性分类" right={right} headerClassName="bg-primary align-middle">
+        return <Page header={header} right={right} headerClassName="bg-primary align-middle">
            {/*输出列表,其中属性items为数据集合,属性item可自定义集合项输出样式和指定事件处理方法,
             render用于指定自定义输出布局的方法,该方法两个参数,第一个参数就是遍历数据集合时当前数据项,第二个参数为数据项在集合中的索引
             onClick用于指定集合项在接收点击事件的处理方法*/}
@@ -31,20 +34,19 @@ export class VAtrributeClassList extends VPage<CAttributeClass>{
         </Page>
     }
 
-    //新增属性分类
-    private onAddClick=() =>{
-        this.controller.showNewAttributeClass();
-    }
-
     //更新属性分类禁用状态
     private disabledClick = (item:any) => {
         this.controller.eidtAttributeClassDisabled(item);
     }
 
+    //新增属性分类
+    private onAddClick=() =>{
+        this.controller.showEditAttributeClass(this.producttype);
+    }
 
     //编辑属性分类
     private editItemClick = (item:any) => {
-        this.controller.showEditAttributeClass(item);
+        this.controller.showEditAttributeClass(this.producttype, item);
     }
 
     //显示顺序上升

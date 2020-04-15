@@ -19,7 +19,7 @@ export class CDataDictionary extends CUqBase{
     protected async internalStart(){
         this.CAttributeClass= this.newC(CAttributeClass);
         this.CProducAttribute=this.newC(CProducAttribute)
-        this.CAttributeClass.start();
+        //this.CAttributeClass.start();
     }
 
     productTypePage:QueryPager<any>;
@@ -35,10 +35,12 @@ export class CDataDictionary extends CUqBase{
         this.openVPage(VProductTypeList);
     }
 
+    
+    /*打开产品属性View*/
     CProducAttribute:CProducAttribute;
     CAttributeClass:CAttributeClass;
-    /*打开产品属性View*/
     showcpsx=async()=>{
+        await this.CAttributeClass.start();
         this.openVPage(ProductAttributeMain)
     }
 
@@ -60,9 +62,9 @@ export class CDataDictionary extends CUqBase{
     showNewproducttype=async()=>{
        this.producttype=this.getemptyproducttype();
         /*生成编号*/
-        let newno= await this.uqs.productcompare.producttype.no();
+        /*let newno= await this.uqs.productcompare.producttype.no();
         let no= createNo(newno);
-        this.producttype.no = no;
+        this.producttype.no = no;*/
         /*生成编号*/ 
         this.openVPage(VProductTypeEdit,this.producttype);
     }
@@ -103,7 +105,8 @@ export class CDataDictionary extends CUqBase{
             if(id<0)//新增的            
             {   
                 this.producttype.id=ret.id;
-                this.productTypePage.items.unshift(this.producttype);
+                //this.productTypePage.items.unshift(this.producttype);//unshift将item放到items里的第一个,push将item放到items的末尾
+                this.productTypePage.items.push(this.producttype);//unshift将item放到items里的第一个,push将item放到items的末尾
             }
             else//修改
             {

@@ -22,7 +22,7 @@ export class VProductTypeEdit extends VPage<CDataDictionary>
         let schema: Schema=[
             {name:'name', type:'string' ,required:true},
             {name:'note', type:'string'},
-            {name:'disabled' , type:'string'},
+            {name:'disabled' , type:'boolean'},
             {name:'commit', type:'submit'}
         ];
 
