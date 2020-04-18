@@ -9,7 +9,7 @@ TUID productattributeclass (
     note varchar(500),--备注
     disabled int,--禁用
     unique(no),--设置不能有重复值的字段
-    index i_name (name) unique,--创建索引
+    index i_name (producttype,name) unique,--创建索引
     search(no, name, seachcode) --定义检索字段
 );
 

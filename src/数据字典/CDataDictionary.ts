@@ -6,12 +6,14 @@ import { createNo } from "tool/tools";
 import { TuidSaveResult } from "tonva/dist/uq/tuid/tuid";
 import { VDataDictionary } from "./VDataDictionary";
 import {VProductTypeList} from "./产品类型/VProductTypeList";
-import {VEnumList} from "./枚举选项/VEnumList";
+import {VEnumerationList} from "./枚举选项/VEnumerationList";
 import { CProducAttribute } from './产品属性/属性维护/CProducAttribute';
 import { CAttributeClass } from './产品属性/属性分类/CAttributeClass';
 import {ProductAttributeMain} from './产品属性/ProductAttributeMain'
 import { VProductTypeEdit } from "./产品类型/VProductTypeEdit";
 import { VEnumerationEidt } from "./枚举选项/VEnumerationEdit";
+import { VEnumItemList } from "./枚举选项/VEnumItemList";
+import { VEnumItemEdit } from "./枚举选项/VEnumItemEdit";
 
 
 
@@ -133,7 +135,7 @@ export class CDataDictionary extends CUqBase{
         this.enumerationPage=new QueryPager(this.uqs.productcompare.queryenum,10,30);
         this.enumerationPage.setItemDeepObservable();
         this.enumerationPage.first({key:''});
-        this.openVPage(VEnumList);
+        this.openVPage(VEnumerationList);
     }
 
     getEmptyEnumeration=()=>{
@@ -196,6 +198,89 @@ export class CDataDictionary extends CUqBase{
             if(ret.id<=0)
             {
                 this.productTypePage.items[index]["disabled"]=disabled==1?0:1; 
+            }
+        }
+    }
+
+    /************************************************************************************/
+    /**************************************枚举选项维护***********************************/
+    /************************************************************************************/
+    enumitemspager:QueryPager<any>;
+    enumitem:any;
+
+    showEnumItemsView = (enumeration:any) =>{
+        let {id} = enumeration;
+        this.enumitemspager=new QueryPager(this.uqs.productcompare.queryenumitems,1000,1000);
+        this.enumitemspager.setItemDeepObservable();
+        this.enumitemspager.first({key:'',ownerenum:id});
+        this.openVPage(VEnumItemList,enumeration);
+    }
+
+    getemptyitem =() =>{
+        return {id:-1, no:'', name:'', displayorder:0, enumeration:-1, disabled:0};
+    }
+
+    showEnumItemsEdit = (enumeration:any, item:any=undefined) =>{
+        if(item===undefined){
+            this.enumitem=this.getemptyitem();
+            this.enumitem.enumeration=enumeration.id;
+            this.enumitem.displayorder=this.enumitemspager.items.length + 1;
+        }
+        else{
+            this.enumitem=item;
+        }
+
+        this.openVPage(VEnumItemEdit,this.enumitem)
+    }
+
+    saveEnumItem = async(enumeration:number, item:any):Promise<TuidSaveResult>=>{
+        let {id}=this.enumitem;
+        let {name,displayorder,disabled}=item;
+
+        if(id<0){
+             /*生成编号*/
+            let newno=await this.uqs.productcompare.enumitems.no();
+            let no=createNo(newno);
+            this.enumitem.no=no;
+             /*生成编号*/
+        }
+
+        this.enumitem.name=name;
+        this.enumitem.displayorder=displayorder;
+        this.enumitem.disabled=disabled;
+        this.enumitem.enumeration=this.uqs.productcompare.enumeration.boxId(enumeration);
+    
+        let ret=await this.uqs.productcompare.enumitems.save(id,this.enumitem);//ret.id为保存后返回的的基础信息id,id=0表示失败,id>0表示成功,id<0表示为做任何更改,ret.inid调用save方法是传入的原始id值
+        if(ret.id>0){//保存成功
+            this.enumitem.enumeration=enumeration;
+            if(id<0){//新增
+                this.enumitem.id=ret.id;
+                this.enumitemspager.items.push(this.enumitem);
+            }
+            else{
+                let index=this.enumitemspager.items.findIndex(vi => vi.id === id);
+                if(index>0)
+                {
+                    _.merge(this.enumitemspager.items[index],this.enumitem);
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    updateEnumItemDisabled = async(enumitem:any) =>{
+        let{id,disabled}=enumitem;
+        let index = this.enumitemspager.items.findIndex(v => v.id === id);
+        if (index>=0) {
+            this.enumitemspager.items[index]["disabled"]=disabled==1?0:1;
+            let enumeration=this.enumitemspager.items[index].enumeration;
+            this.enumitemspager.items[index].enumeration=this.uqs.productcompare.enumeration.boxId(enumeration);
+            let ret=await this.uqs.productcompare.enumitems.save(id,this.enumitemspager.items[index]);
+            this.enumitemspager.items[index].enumeration=enumeration;
+            if(ret.id<=0)
+            {
+                this.enumitemspager.items[index]["disabled"]=disabled==1?0:1; 
             }
         }
     }

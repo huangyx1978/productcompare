@@ -81,6 +81,7 @@ export class CAttributeClass extends CUqBase{
         let ret=await this.uqs.productcompare.productattributeclass.save(id,this.attributeclass);
         if(ret.id>0)//ret.id为保存后返回的的基础信息id,id=0表示失败,id>0表示成功,id<0表示未做任何更改,ret.inid调用save方法是传入的原始id值
         {
+            this.attributeclass.producttype=producttype;
             if(id<0)//新增
             {
                 this.attributeclass.id=ret.id;

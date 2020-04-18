@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { Page, VPage, ImageUploader, Form, ItemSchema, UiSchema, UiTextItem, ButtonWidget, UiButton, NumSchema, UiTextAreaItem, List, LMR, FA, SearchBox } from 'tonva';
 import {CDataDictionary} from '../CDataDictionary'
 
-export class VEnumList extends VPage<CDataDictionary>{
+export class VEnumerationList extends VPage<CDataDictionary>{
     async open(param?: any){
         this.openPage(this.page);
     }
@@ -56,7 +56,7 @@ export class VEnumList extends VPage<CDataDictionary>{
 
     //编辑枚举选项
     private editEnumItemClick = (item:any) => {
-        //this.controller.showEditAttributeClass(this.producttype, item);
+        this.controller.showEnumItemsView(item);
     }
 
 
