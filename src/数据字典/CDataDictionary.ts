@@ -6,11 +6,12 @@ import { createNo } from "tool/tools";
 import { TuidSaveResult } from "tonva/dist/uq/tuid/tuid";
 import { VDataDictionary } from "./VDataDictionary";
 import {VProductTypeList} from "./产品类型/VProductTypeList";
-import {VMenmList} from "./枚举选项/VMenmList";
+import {VEnumList} from "./枚举选项/VEnumList";
 import { CProducAttribute } from './产品属性/属性维护/CProducAttribute';
 import { CAttributeClass } from './产品属性/属性分类/CAttributeClass';
 import {ProductAttributeMain} from './产品属性/ProductAttributeMain'
 import { VProductTypeEdit } from "./产品类型/VProductTypeEdit";
+import { VEnumerationEidt } from "./枚举选项/VEnumerationEdit";
 
 
 
@@ -22,10 +23,15 @@ export class CDataDictionary extends CUqBase{
         //this.CAttributeClass.start();
     }
 
-    productTypePage:QueryPager<any>;
-
-    /*必需的定义,用于输出模块的展示View*/
+    /*必需的定义,用于输出模块的首个展示View*/
     tab = () =>this.renderView(VDataDictionary);//必需的定义
+
+
+    /************************************************************************************/
+    /**************************************产品类型维护***********************************/
+    /************************************************************************************/
+    productTypePage:QueryPager<any>;
+    producttype:any;
 
     /*打开产品类型View*/
     showcplx=async()=>{
@@ -35,49 +41,19 @@ export class CDataDictionary extends CUqBase{
         this.openVPage(VProductTypeList);
     }
 
-    
-    /*打开产品属性View*/
-    CProducAttribute:CProducAttribute;
-    CAttributeClass:CAttributeClass;
-    showcpsx=async()=>{
-        await this.CAttributeClass.start();
-        this.openVPage(ProductAttributeMain)
-    }
-
-    /*打开属性分类View*/
-    showmjxx=async()=>{
-        this.openVPage(VMenmList);
-    }
-
-    /************************************************************************************/
-    /**************************************产品类型维护***********************************/
-    /************************************************************************************/
-    producttype:any;
-
     getemptyproducttype=():any=>{
         return {id: -1,no: '', name: '',seachcode: '', note:'' ,disabled:0} 
     }
 
-    /**新增产品类型**/
-    showNewproducttype=async()=>{
-       this.producttype=this.getemptyproducttype();
-        /*生成编号*/
-        /*let newno= await this.uqs.productcompare.producttype.no();
-        let no= createNo(newno);
-        this.producttype.no = no;*/
-        /*生成编号*/ 
-        this.openVPage(VProductTypeEdit,this.producttype);
-    }
-
     /**编辑产品类型**/
-    showEditProductType=async(producttype:any=undefined)=>{//producttype:any=undefined 表示company参数不传值时用等号后面的值赋值,company?:any 表示company可传可不传
-        if(producttype===undefined)//新建
+    showEditProductType=(item:any=undefined)=>{//producttype:any=undefined 表示company参数不传值时用等号后面的值赋值,company?:any 表示company可传可不传
+        if(item===undefined)//新建
         {
             this.producttype=this.getemptyproducttype();
         }
         else
         {
-            this.producttype=producttype;
+            this.producttype=item;
         }
         this.openVPage(VProductTypeEdit,this.producttype);
     }
@@ -127,18 +103,102 @@ export class CDataDictionary extends CUqBase{
             this.productTypePage.items[index]["disabled"]=disabled==1?0:1;
             let ret=await this.uqs.productcompare.producttype.save(id,this.productTypePage.items[index]);
 
-            if(ret.id>0)
-            {
-
-            }
-            else
+            if(ret.id<=0)
             {
                 this.productTypePage.items[index]["disabled"]=disabled==1?0:1; 
             }
         }
     }
 
+    /************************************************************************************/
+    /**********************************打开产品属性TabView********************************/
+    /************************************************************************************/
 
+    /*打开产品属性View*/
+    CProducAttribute:CProducAttribute;
+    CAttributeClass:CAttributeClass;
+    showcpsx=async()=>{
+        await this.CAttributeClass.start();
+        this.openVPage(ProductAttributeMain)
+    }
+
+    /************************************************************************************/
+    /**************************************枚举维护***********************************/
+    /************************************************************************************/
+    enumerationPage:QueryPager<any>;
+    enumeration:any;
+
+    /*打开枚举选项View*/
+    showmjxx=async()=>{
+        this.enumerationPage=new QueryPager(this.uqs.productcompare.queryenum,10,30);
+        this.enumerationPage.setItemDeepObservable();
+        this.enumerationPage.first({key:''});
+        this.openVPage(VEnumList);
+    }
+
+    getEmptyEnumeration=()=>{
+        return {id:-1, no:'', name:'', note:'', disabled:0};
+    }
+
+    showEditEnumeration=(item:any=undefined)=>{//producttype:any=undefined 表示company参数不传值时用等号后面的值赋值,company?:any 表示company可传可不传
+        if(item===undefined){//新增
+            this.enumeration=this.getEmptyEnumeration();
+        }
+        else{//修改
+            this.enumeration=item;
+        }
+
+        this.openVPage(VEnumerationEidt,this.enumeration);
+    }
+
+    saveEnumeration= async(item:any):Promise<TuidSaveResult>=>{
+        let {id}=this.enumeration;
+        let {name,note,disabled}=item;
+
+        if(id<0){
+             /*生成编号*/
+            let newno=await this.uqs.productcompare.enumeration.no();
+            let no=createNo(newno);
+            this.enumeration.no=no;
+             /*生成编号*/
+        }
+
+        this.enumeration.name=name;
+        this.enumeration.note=note;
+        this.enumeration.disabled=disabled;
+    
+        let ret=await this.uqs.productcompare.enumeration.save(id,this.enumeration);//ret.id为保存后返回的的基础信息id,id=0表示失败,id>0表示成功,id<0表示为做任何更改,ret.inid调用save方法是传入的原始id值
+        if(ret.id>0){//保存成功
+            if(id<0){//新增
+                this.enumeration.id=ret.id;
+                this.enumerationPage.items.push(this.enumeration);
+            }
+            else{
+                let index=this.enumerationPage.items.findIndex(vi => vi.id === id);
+                if(index>0)
+                {
+                    _.merge(this.enumerationPage.items[index],this.enumeration);
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    
+    updateEnumerationDisabled = async(enumeration:any) =>{
+        let{id,disabled}=enumeration;
+        let index = this.enumerationPage.items.findIndex(v => v.id === id);
+        if (index>=0) {
+            this.enumerationPage.items[index]["disabled"]=disabled==1?0:1;
+            let ret=await this.uqs.productcompare.enumeration.save(id,this.enumerationPage.items[index]);
+
+            if(ret.id<=0)
+            {
+                this.productTypePage.items[index]["disabled"]=disabled==1?0:1; 
+            }
+        }
+    }
 
 
 }

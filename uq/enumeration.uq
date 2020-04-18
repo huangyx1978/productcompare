@@ -1,0 +1,66 @@
+//产品类型
+TUID enumeration(
+    id,
+    main no varchar(50),--编号
+    main name varchar(200),--名称
+    disabled int,--禁用
+    unique(no),--设置不能有重复值的字段
+    index i_name (name) unique,--创建索引
+    search(no, name) --定义检索字段
+    --index 索引名称(字段名1,字段名2) 其他参数--自定义索引写法
+);
+
+TUID enumitems(
+    id,
+    main no varchar(50),--编号
+    main name varchar(200),--名称
+    displayorder int,--显示顺序
+    enumeration id enumeration,--所属枚举
+    disabled int,--禁用
+    unique(no),--设置不能有重复值的字段
+    index i_name (enumeration,name) unique,--创建索引
+    search(no, name) --定义检索字段
+);
+
+QUERY queryenum ( 
+    key varchar(100)--参数
+)
+PAGE (
+    id bigint start 0 asc,//分页查询必需指定一个id字段作为分页依据
+    no varchar(50),--编号
+    name varchar(200),--名称
+    disabled int, --禁用
+    itemscount int
+) {
+    var _key varchar(100);
+    set _key = concat('%', key, '%');
+    page select id,no,name,disabled,count(b.id) as itemscount
+         from (select a.id,a.no,a.name,a.disabled from enumeration as a 
+               where a.id>$pageStart and (a.no like _key or a.name like _key)
+              ) as c
+         left join enumitems as b on b.enumeration=c.id
+         group by c.id as id,c.no as no,c.name as name,c.disabled as disabled
+         order by id asc
+         limit $pageSize;
+};
+
+QUERY queryenumitems (
+    key varchar(100),--参数
+    ownerenum id enumeration --所属枚举
+)
+PAGE (
+    id bigint start 0 asc,
+    no varchar(50),--编号
+    name varchar(200),--名称
+    displayorder int,--显示顺序
+    enumeration id enumeration,--所属枚举
+    disabled int--禁用
+) {
+    var _key varchar(100);
+    set _key = concat('%', key, '%');
+    page select a.id,a.no,a.name,a.displayorder,a.enumeration,a.disabled
+        from enumitems as a
+        where (a.no like _key or a.name like _key)
+        and a.enumeration=ownerenum
+        order by displayorder asc;
+};

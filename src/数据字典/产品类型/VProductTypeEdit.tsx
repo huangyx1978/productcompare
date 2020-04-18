@@ -10,11 +10,6 @@ export class VProductTypeEdit extends VPage<CDataDictionary>
         this.openPage(this.page,producttype);
     }
 
-
-    private renderdisabled = (item: any) => {
-        return <Checkbox><Switch name='disabled' onValue='1' offValue='0' onText='启用' offText='禁用'></Switch></Checkbox>;//将基础信息的内容进行组织并输出
-    }
-
     private page=(producttype?: any)=>{
         //let formdate={no:company.no,name:company.name,abbreviation:company.abbreviation,address:company.address,telephone:company.telephone,note:company.note};
         let formdate={...producttype};//将参数对象的属性自动生成同名元素的Json对象

@@ -14,7 +14,7 @@ export class VAttributeClassGroup extends VPage<CAttributeClass>{
     /*单个数据项输出界面元素*/
     private renderproducttype=(producttype:any, index:number) => {
         let {name,classcount} = producttype;//将company对象的no属性,name属性,disabled属性自动赋值给同名的变量,一种语法糖,类似于C#中Json对象与类的实例自动转换,通过名称自动匹配
-        let right =<span className="badge badge-pill badge-info">{classcount}</span>;//列表右侧显示的界面元素
+        let right =<span className="badge badge-pill badge-info mr-2">{classcount}</span>;//列表右侧显示的界面元素
         return <LMR className="px-3 py-2 align-items-center cursor-pointer" right={right} ><b className="h6">{name}</b></LMR>//输出包含左中右三个分区的列表项
     }
     
